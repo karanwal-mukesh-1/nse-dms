@@ -100,37 +100,7 @@ def render_decision_badge(intel: MarketIntelligence):
     </div>""", unsafe_allow_html=True)
 
 
-# ─── SCORE RING ───────────────────────────────────────────────────────────────
-
-def score_ring(score: float, label: str, size: int = 100, key_suffix: str = "") -> go.Figure:
-    r    = size / 2 - 9
-    circ = 3.14159 * 2 * r
-    dash = score / 100 * circ
-    col  = score_color(score)
-
-    fig = go.Figure()
-    fig.add_trace(go.Scatter(
-        x=[0], y=[0], mode="text",
-        text=[f"<b>{score:.0f}</b>"],
-        textfont=dict(size=size // 4.5, color=col, family="JetBrains Mono"),
-        hoverinfo="skip",
-    ))
-    fig.update_layout(
-        paper_bgcolor="rgba(0,0,0,0)",
-        plot_bgcolor="rgba(0,0,0,0)",
-        showlegend=False,
-        xaxis=dict(visible=False, range=[-1, 1]),
-        yaxis=dict(visible=False, range=[-1, 1]),
-        width=size, height=size,
-        margin=dict(l=0, r=0, t=0, b=0),
-        annotations=[dict(
-            text=f"<b>{score:.0f}</b>",
-            x=0.5, y=0.5, showarrow=False,
-            font=dict(size=size // 4, color=col, family="JetBrains Mono"),
-            xref="paper", yref="paper",
-        )],
-    )
-    return fig
+# score_ring removed — unused
 
 
 # ─── SCORE BARS ──────────────────────────────────────────────────────────────
@@ -436,7 +406,7 @@ def chart_sector_heatmap(sectors: List[SectorData], timeframe: str = "1D") -> go
         hovertemplate="<b>%{text}</b><extra></extra>",
     ))
     fig.update_layout(
-        **{k: v for k, v in PLOTLY_THEME.items() if k not in ("xaxis","yaxis")},
+        **{k: v for k, v in PLOTLY_THEME.items() if k not in ("xaxis", "yaxis", "margin")},
         xaxis=dict(showticklabels=False, showgrid=False),
         yaxis=dict(showticklabels=False, showgrid=False),
         height=200,
@@ -465,10 +435,11 @@ def chart_nifty_ma(closes: List[float]) -> go.Figure:
     fig.add_trace(go.Scatter(x=x, y=ma50, name="50 MA",  line=dict(color="#ffb300", width=1.2, dash="dot")))
     fig.add_trace(go.Scatter(x=x, y=ma200,name="200 MA", line=dict(color="#ff4444", width=1.5)))
     fig.update_layout(
-        **PLOTLY_THEME,
+        **{k: v for k, v in PLOTLY_THEME.items() if k not in ("margin",)},
         title=dict(text="Nifty 50 — Price vs Moving Averages",
                    font=dict(size=10, color="#4a9eff"), x=0),
         height=300, showlegend=True,
         legend=dict(orientation="h", x=0, y=1.1, font=dict(size=8)),
+        margin=dict(l=8, r=8, t=40, b=8),
     )
     return fig
